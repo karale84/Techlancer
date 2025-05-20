@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Techlancer - Digital Marketing</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- GSAP for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    /* Custom styles and animations */
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f1218;
+      color: #e0e6e9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Gradient animated background for hero */
+    .hero-bg {
+      position: relative;
+      overflow: hidden;
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px 0 rgba(20,184,166,0.25);
+      padding: 3rem 2rem;
+      margin: 2rem auto;
+      max-width: 1100px;
+    }
+
+    .bg-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .bg-slide.active {
+      opacity: 1;
+    }
+
+    .bg-slide::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(15,18,24,0.9) 0%, rgba(1,121,111,0.8) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Navigation */
+    nav {
+      backdrop-filter: saturate(180%) blur(20px);
+      background-color: rgba(15,18,24,0.8);
+      z-index: 9999;
+      border-radius: 2rem; /* curved edges */
+      padding-left: 1rem;
+      padding-right: 1rem;
+      max-width: 900px; /* smaller width */
+      margin: 0.75rem auto;
+      box-shadow: 0 0 8px #14b8a6bb;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 56px;
+    }
+    nav a {
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #14b8a6;
+    }
+    /* Logo styling */
+    .logo svg {
+      width: 40px;
+      height: 40px;
+      fill: #14b8a6;
+      transition: transform 0.4s ease;
+      cursor: pointer;
+    }
+    .logo svg:hover {
+      transform: rotate(360deg);
+    }
+
+    /* Hamburger */
+    #hamburger {
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: #14b8a6;
+    }
+
+    /* Cards */
+    .card, .project-box, .service-box {
+      background: #111821;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 15px transparent;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: default;
+    }
+    .card:hover, .project-box:hover, .service-box:hover {
+      box-shadow: 0 0 25px #14b8a6ff;
+      transform: translateY(-10px);
+    }
+
+    /* Scroll fade-in animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Animated Button */
+    .btn-cta {
+      background: #14b8a6;
+      color: #0f1218;
+      font-weight: 700;
+      padding: 0.75rem 2rem;
+      border-radius: 9999px;
+      box-shadow:
+        0 0 5px #14b8a6,
+        0 0 10px #14b8a6,
+        0 0 20px #14b8a6,
+        0 0 30px #14b8a6;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .btn-cta:hover {
+      box-shadow:
+        0 0 10px #0ff,
+        0 0 20px #0ff,
+        0 0 30px #0ff,
+        0 0 40px #0ff;
+      transform: scale(1.05);
+    }
+
+    /* Form inputs */
+    input, textarea {
+      background: #111821;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: #e0e6e9;
+      outline-offset: 2px;
+      outline-color: transparent;
+      transition: outline-color 0.3s ease;
+      width: 100%;
+      resize: vertical;
+    }
+    input:focus, textarea:focus {
+      outline-color: #14b8a6;
+      background:#163334;
+    }
+    /* Submit button animation */
+    .btn-submit {
+      background: #14b8a6;
+      color: #0f1218;
+      font-weight: 700;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      box-shadow:
+        0 0 7px #14b8a6,
+        0 0 14px #14b8a6;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-submit:hover {
+      box-shadow:
+        0 0 15px #0ff,
+        0 0 30px #0ff;
+      transform: scale(1.05);
+    }
+
+    /* Social icons */
+    .social-icons a {
+      color: #888;
+      transition: color 0.3s, transform 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-left: 0.75rem;
+    }
+    .social-icons a:hover {
+      color: #14b8a6;
+      transform: scale(1.2) rotate(10deg);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #111821;
+    }
+
+    /* Responsive: show mobile menu */
+    @media (max-width: 768px) {
+      nav {
+        max-width: none;
+        margin: 0.75rem 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      #nav-menu {
+        display: none;
+        flex-direction: column;
+        background: rgba(15,18,24,0.95);
+        position: absolute;
+        top: 56px;
+        right: 10px;
+        width: 180px;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0;
+        box-shadow: 0 0 12px #14b8a6bb;
+      }
+      #nav-menu.show {
+        display: flex;
+      }
+      #nav-menu a {
+        padding: 12px 20px;
+        border-bottom: 1px solid #222f2f;
+      }
+      #nav-menu a:last-child {
+        border-bottom: none;
+      }
+    }
+
+    /* To prevent content behind fixed nav */
+    body {
+      padding-top: 72px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav>    <a href="#home" class="logo flex items-center" aria-label="Techlancer Logo" tabindex="0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="" aria-hidden="true" role="img">
+        <circle cx="32" cy="32" r="28" stroke="#14b8a6" stroke-width="4" fill="none" />
+        <path d="M20 44 L32 24 L44 44" stroke="#14b8a6" stroke-width="4" fill="none" stroke-linejoin="round" />
+      </svg>
+      <span class="ml-3 text-teal-400 font-bold text-xl select-none">Techlancer</span>
+    </a>
+
+    <div id="nav-menu" class="md:flex md:items-center space-x-6 text-lg font-medium text-gray-300">
+      <a href="#home" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Home</a>
+      <a href="#about" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">About Us</a>
+      <a href="#website-development" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Website Development</a>
+      <a href="#ads-development" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Ads Development</a>
+      <a href="#contact" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Contact Us</a>
+    </div>
+
+    <button id="hamburger" class="md:hidden focus:outline-none" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+      &#9776;
+    </button>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" class="hero-bg min-h-screen flex flex-col justify-center items-center text-center px-4 md:px-0">
+    <div class="bg-slide active" style="background-image: url('https://assets.grok.com/users/5f252c7f-ad7f-48c3-9fa9-f0a91a0a0bb2/generated/9NbOYAiE84apvY8S/image.jpg');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1920&q=80');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1920&q=80');"></div>
+    <div class="hero-content"></div>
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight max-w-4xl mb-4 opacity-0" id="hero-title">Grow your brand with our marketing expertise.</h1>
+      <p class="text-lg md:text-2xl text-teal-300 opacity-0 max-w-xl mb-10 mx-auto" id="hero-subheading">Smart Web. Smarter Marketing</p>
+      <a href="#contact" class="btn-cta shadow-lg opacity-0" id="hero-cta" aria-label="Get Started Button">Get Started</a>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section id="about" class="px-4 md:px-20 py-20 max-w-7xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-12">About Us</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div class="card flex flex-col items-center text-center p-6" tabindex="0" aria-label="Our Mission">        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#14b8a6" stroke-width="3" viewBox="0 0 24 24" class="w-12 h-12 mb-4 hover:stroke-teal-300 transition-colors">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.08 12.08 0 01-6.16-10.922L12 14z"></path>
+        </svg>
+        <h3 class="text-2xl font-semibold mb-2">Our Mission</h3>
+        <p>To elevate brands through innovative web development.</p>
+      </div>
+      <div class="card flex flex-col items-center text-center p-6" tabindex="0" aria-label="Our Goals">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#14b8a6" stroke-width="3" viewBox="0 0 24 24" class="w-12 h-12 mb-4 hover:stroke-teal-300 transition-colors">
+          <circle cx="12" cy="12" r="10" stroke-linecap="round" stroke-linejoin="round"></circle>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 14l2-2 4 4"></path>
+        </svg>
+        <h3 class="text-2xl font-semibold mb-2">Our Goals</h3>
+        <p>Deliver your Digital Ads WorldWide</p>
+      </div>
+      <div class="card flex flex-col items-center text-center p-6" tabindex="0" aria-label="Our Team">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#14b8a6" stroke-width="3" viewBox="0 0 24 24" class="w-12 h-12 mb-4 hover:stroke-teal-300 transition-colors">
+          <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.5 21a6.5 6.5 0 0113 0"></path>
+        </svg>
+        <h3 class="text-2xl font-semibold mb-2">Our Team</h3>
+        <p>A dedicated team of marketing professionals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Website Development Section -->
+  <section id="website-development" class="px-4 md:px-20 py-20 max-w-7xl mx-auto bg-gradient-to-r from-black to-gray-900 rounded-3xl mb-20">
+    <h2 class="text-4xl font-bold text-center mb-12">Website Development</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="project-box p-6 cursor-pointer" tabindex="0" aria-label="Personal and Business Portfolio">
+        <img src="file:///C:/Users/Sanskar%20karale/Downloads/project%201.PNG" alt="Personal and Business Portfolio Screenshot" class="mb-4 rounded-lg shadow-lg w-full h-40 object-cover" />
+        <h3 class="text-xl font-semibold mb-2 text-teal-400">Personal and Business Portfolio</h3>
+        <p class="mb-3">A portfolio website to showcase your personal and business projects, highlight your skills, and attract new opportunities. Essential for building your online presence and credibility.</p>
+        <p class="mb-3 font-mono text-sm bg-yellow-300 text-black font-bold p-2 rounded">Rs-6000</p>
+        <a href="https://kzmr0qwae3k012hlrud6.lite.vusercontent.net/" target="_blank" rel="noopener" class="text-teal-300 hover:underline">View Project</a>
+      </div>
+      <div class="project-box p-6 cursor-pointer" tabindex="0" aria-label="Project Beta">
+        <img src="file:///C:/Users/Sanskar%20karale/Downloads/project%202.PNG" alt="Project Beta Screenshot" class="mb-4 rounded-lg shadow-lg w-full h-40 object-cover" />
+        <h3 class="text-xl font-semibold mb-2 text-teal-400">Web Developemt</h3>
+        <p class="mb-3">A website gives your business a 24/7 professional presence, builds trust, expands reach, and helps attract and convert more customers online.</p>
+        <p class="mb-3 font-mono text-sm bg-yellow-300 text-black font-bold p-2 rounded">Rs-50000 to 10000</p>
+        <a href="https://kzmq3mz4m52d0cw7yrmc.lite.vusercontent.net/" target="_blank" rel="noopener" class="text-teal-300 hover:underline">View Project</a>
+      </div>
+      <div class="project-box p-6 cursor-pointer" tabindex="0" aria-label="E-commers website">
+        <img src="file:///C:/Users/Sanskar%20karale/Downloads/project3.PNG" alt="Project Gamma Screenshot" class="mb-4 rounded-lg shadow-lg w-full h-40 object-cover" />
+        <h3 class="text-xl font-semibold mb-2 text-teal-400">E-commers website</h3>
+        <p class="mb-3">n eCommerce website expands your business by reaching more customers online, increasing sales, and allowing you to sell products 24/7 without geographic limits.</p>
+        <p class="mb-3 font-mono text-sm bg-yellow-300 text-black font-bold p-2 rounded">Rs-15000 to 20000</p>
+        <a href="https://kzmkr7up64n4u3m8n0by.lite.vusercontent.net/" target="_blank" rel="noopener" class="text-teal-300 hover:underline">View Project</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ads Development Section -->
+  <section id="ads-development" class="px-4 md:px-20 py-20 max-w-7xl mx-auto bg-gradient-to-r from-black to-gray-900 rounded-3xl mb-20">
+    <h2 class="text-4xl font-bold text-center mb-12">Ads & Campaigns</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="service-box p-6 cursor-pointer flex flex-col items-center" tabindex="0" aria-label="Google Ads Service">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google Ads Logo" class="mb-4 w-20 h-20 object-contain bg-white rounded-full p-2 shadow" />
+        <h3 class="text-xl font-semibold mb-2 text-teal-400">Google Ads</h3>
+        <p class="mb-3 text-center">Targeted advertising to grow your reach on world's largest search engine.</p>
+      </div>
+      <div class="service-box p-6 cursor-pointer flex flex-col items-center" tabindex="0" aria-label="Meta Ads Service">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Meta Ads Logo" class="mb-4 w-20 h-20 object-contain bg-white rounded-full p-2 shadow" />
+        <h3 class="text-xl font-semibold mb-2 text-teal-400">Meta Ads</h3>
+        <p class="mb-3 text-center">Instagram & Facebook advertising campaigns crafted for conversion.</p>
+      </div>
+      <div class="service-box p-6 cursor-pointer flex flex-col items-center" tabindex="0" aria-label="SEO Optimisation Service">
+        <img src="https://assets.grok.com/users/5f252c7f-ad7f-48c3-9fa9-f0a91a0a0bb2/generated/adkzQKSBn2oRy5hw/image.jpg" alt="SEO Optimisation Icon" class="mb-4 w-20 h-20 object-contain bg-white rounded-full p-2 shadow" />
+        <h3 class="text-xl font-semibold mb-2 text-teal-400">SEO Optimisation</h3>
+        <p class="mb-3 text-center">Boost your website ranking and visibility with expert SEO strategies.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section id="contact" class="py-20 px-4 md:px-20 max-w-4xl mx-auto bg-gradient-to-r from-black to-gray-900 rounded-3xl mb-20 shadow-xl">
+    <h2 class="text-4xl font-bold text-center mb-12 text-teal-400">Contact Us</h2>
+    <form id="contact-form" class="space-y-6 bg-[#111821] rounded-xl p-8 shadow-lg flex flex-col items-center" aria-label="Contact Form">
+      <div class="w-full flex flex-col md:flex-row gap-6">
+        <input type="text" name="fullName" aria-label="Full Name" placeholder="Full Name" required class="fade-in flex-1"/>
+        <input type="email" name="email" aria-label="Email" placeholder="Email" required class="fade-in flex-1"/>
+      </div>
+      <div class="w-full flex flex-col md:flex-row gap-6">
+        <input type="tel" name="phone" aria-label="Phone Number" placeholder="Phone Number" class="fade-in flex-1"/>
+        <input type="text" name="company" aria-label="Company" placeholder="Company (optional)" class="fade-in flex-1"/>
+      </div>
+      <textarea name="message" aria-label="Message" placeholder="Message" rows="5" required class="fade-in w-full"></textarea>
+      <button type="submit" class="btn-submit fade-in w-full md:w-auto px-10 py-3 text-lg font-semibold mt-4" aria-label="Submit Contact Form">
+        Send Message
+      </button>
+    </form>
+    <div class="flex justify-center items-center gap-8 mt-10">      <a href="mailto:info@techlancer.com" class="text-teal-400 hover:underline flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+        info@techlancer.com
+      </a>
+      <a href="tel:+1234567890" class="text-teal-400 hover:underline flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92V21a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3 5.18 2 2 0 0 1 5 3h4.09a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.05a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.98.35 2 .59 3.05.72A2 2 0 0 1 22 16.92z"/></svg>
+        +1 234 567 890
+      </a>
+    </div>
+  </section>
+
+  <!-- Social Media Links -->
+  <footer class="py-8 bg-gray-900 text-gray-400">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">      <div class="flex items-center space-x-3">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#14b8a6" stroke-width="4" viewBox="0 0 64 64" class="w-10 h-10" aria-hidden="true" focusable="false">
+          <circle cx="32" cy="32" r="28"/>
+          <path d="M20 44 L32 24 L44 44" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-bold text-xl select-none">Techlancer</span>
+      </div>
+      <div class="flex space-x-8 uppercase tracking-wide font-medium text-sm">
+        <a href="#home" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Home</a>
+        <a href="#about" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">About</a>
+        <a href="#website-development" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Services</a>
+        <a href="#contact" class="hover:text-teal-400 focus:text-teal-400 focus:outline-none">Contact</a>
+      </div>
+      <div class="flex social-icons">
+        <a href="https://instagram.com" target="_blank" aria-label="Instagram Link" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37a4 4 0 1 1-4.27-4.27"/>
+            <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>
+          </svg>
+        </a>
+        <a href="https://twitter.com" target="_blank" aria-label="Twitter Link" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
+            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.4 1"/>
+            <path d="M16 7a4 4 0 0 1-7.71 1.66A11.56 11.56 0 0 1 3 4"/>
+            <path d="M21 21v-1.5a5.5 5.5 0 0 0-11 0v1.5"/>
+          </svg>
+        </a>
+        <a href="https://facebook.com" target="_blank" aria-label="Facebook Link" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4v-3a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://threads.net" target="_blank" aria-label="Threads Link" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v8"/>
+            <path d="M8 12h8"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <p class="text-center text-sm mt-6 text-gray-600 select-none">© 2025 Techlancer. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // DOM ready
+    document.addEventListener('DOMContentLoaded', function () {
+      // Hero section background slider
+      const slides = document.querySelectorAll('.bg-slide');
+      let currentSlide = 0;
+
+      function nextSlide() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }
+
+      // Change slide every 5 seconds
+      setInterval(nextSlide, 5000);
+
+      // GSAP animations for content
+      gsap.to("#hero-title", {opacity: 1, y: 0, duration: 1, ease: "power2.out"});
+      gsap.to("#hero-subheading", {opacity: 1, y: 0, duration: 1, ease: "power2.out", delay: 0.5});
+      gsap.to("#hero-cta", {opacity: 1, y: 0, duration: 1, ease: "power2.out", delay: 1});
+
+      // Hamburger menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const navMenu = document.getElementById('nav-menu');
+      hamburger.addEventListener('click', () => {
+        const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
+        hamburger.setAttribute('aria-expanded', !expanded);
+        navMenu.classList.toggle('show');
+      });
+
+      // Scroll fade-in observer
+      const faders = document.querySelectorAll('.fade-in, .card, .project-box, .service-box, form input, form textarea, form button');
+      const appearOptions = {
+        threshold: 0,
+        rootMargin: "0px 0px -100px 0px"
+      };
+      const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('visible');
+          appearOnScroll.unobserve(entry.target);
+        });
+      }, appearOptions);
+
+      faders.forEach(fader => {
+        appearOnScroll.observe(fader);
+      });
+
+      // Form submission using Formspree
+      const form = document.getElementById('contact-form');
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        // Replace the URL below with your actual Formspree endpoint after registering karalesanskar21@gmail.com
+        fetch('https://formspree.io/f/mnqewzqg', { // Example endpoint, replace with your own!
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        }).then(response => {
+          if (response.ok) {
+            alert('Message sent successfully!');
+            form.reset();
+          } else {
+            alert('Oops! There was a problem sending your message.');
+          }
+        }).catch(() => {
+          alert('Oops! There was a problem sending your message.');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
